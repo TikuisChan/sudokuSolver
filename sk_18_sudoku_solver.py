@@ -9,6 +9,15 @@ testGrid = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
             [0, 0, 0, 4, 1, 9, 0, 0, 5],
             [0, 0, 0, 0, 8, 0, 0, 7, 9]]
 
+hardGrid = [[0, 7, 0, 5, 3, 0, 0, 0, 0],
+            [8, 0, 1, 6, 0, 0, 2, 0, 7],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 4, 0, 6, 0, 0, 0],
+            [3, 0, 0, 0, 0, 0, 7, 4, 5],
+            [0, 8, 0, 0, 0, 0, 0, 0, 6],
+            [4, 0, 5, 0, 0, 0, 0, 7, 0],
+            [0, 0, 3, 1, 0, 0, 0, 2, 9],
+            [0, 0, 0, 0, 0, 0, 5, 0, 0]]
 
 def locateNextEmptyCell(grid):
     # locate empty cell, return False if no empty cell found
@@ -41,6 +50,7 @@ def checkValid(grid, i, j, guess):
 def sudokuSolver(grid):
     global backstep
     # locate empty cell to fill, return True if all cells were filled
+    sim = simplifyGrid(grid)
     if locateNextEmptyCell(grid):
         i, j = locateNextEmptyCell(grid)
     else:
@@ -54,6 +64,8 @@ def sudokuSolver(grid):
             ans = sudokuSolver(grid)
     if not ans:
         grid[i][j] = 0
+        for item in sim:
+            grid[item[0]][item[1]] = 0
         backstep += 1
     else:
         return True
@@ -72,10 +84,37 @@ def printGrid(grid):
             print()
 
 
+def simplifyGrid(grid):
+    # consider each grid and fill all grid with only one choice
+    filled = []
+    filledGridNum = len(filled)
+    while True:
+        # list of empty grids
+        pos = {}
+        for i in range(0, 9):
+            for j in range(0, 9):
+                if grid[i][j] == 0:
+                    pos[(i, j)] = []
+        # apply rules to reduce guess number
+        for key, item in pos.items():
+            for guess in range(1, 10):
+                if checkValid(grid, key[0], key[1], guess):
+                    item.append(guess)
+        # fill grids with possible guess number == 1
+            if len(item) == 1:
+                grid[key[0]][key[1]] = item[0]
+                if key not in filled:
+                    filled.append(key)
+
+        if len(filled) - filledGridNum <= 0:
+            return filled
+        filledGridNum = len(filled)
+
+
 if __name__ == "__main__":
     try:
-        sudokuSolver(testGrid)
-        printGrid(testGrid)
+        sudokuSolver(hardGrid)
+        printGrid(hardGrid)
         print(f'back step = {backstep}')
     except Exception as e:
         print(e)
