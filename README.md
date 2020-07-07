@@ -1,8 +1,8 @@
 # sudokuSolver
 python sudoku solver.  
 
-input: $9*9$ list with empty grid filled as 0.  
-output: $9*9$ filled list and backsteps count indicating the number of back steps involved.  
+input: 9 * 9 list with empty grid filled as 0.  
+output: 9 * 9 filled list and backsteps count indicating the number of back steps involved.  
 
 sample output:  
 finish!  
